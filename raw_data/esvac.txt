@@ -1,0 +1,5 @@
+# This is a copy-paste table 2 (without headers) of page 62 of the report 
+# http://www.oie.int/fileadmin/Home/fr/Our_scientific_expertise/docs/pdf/AMR/Survey_on_monitoring_antimicrobial_agents_Dec2016.pdf
+BacitracinBacitracin740.013514Benzylpenicillin (penicillin G) Benzylpenicillin  1666.670.0006ChlortetracyclineChlortetracycline 900  0.001111Colistin methane sulfonate sodium (colistimethate sodium INN)Colistin127000.000079Colistin sulfate Colistin  205000.000049DihydrostreptomycinDihydrostreptomycin 820  0.00122ErythromycinErythromycin9200.001087GentamicinGentamicin6200.001613KanamycinKanamycin
+ 796
+  0.001256NeomycinNeomycin7550.001325Neomycin B (Framycetin) Neomycin B (Framycetin)  6700.001492Oxytetracycline Oxytetracycline  8700.001149Paromomycin Paromomycin  6750.001481Polymyxin B Polymyxin B   84030.000119RifamycinRifamycin8870.001127SpiramycinSpiramycin 3200  0.000313StreptomycinStreptomycin7850.001274TobramycinTobramycin 875  0.001143TylosinTylosin10000.001TetracyclineTetracycline9500.001
