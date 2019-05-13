@@ -6,6 +6,7 @@ output:
     toc: true
 editor_options: 
   chunk_output_type: console
+css: style.css
 ---
 
 ```{r general_options, include = FALSE}
@@ -35,7 +36,7 @@ conversions as well as on the relationship between weight and age.
 Installing the required packages:
 
 ```{r}
-required <- c("dplyr", "magrittr", "readxl", "tidyr")
+required <- c("dplyr", "magrittr", "readr", "readxl", "tidyr")
 to_install <- setdiff(required, row.names(installed.packages()))
 if (length(to_install)) install.packages(to_install)
 ```
@@ -46,34 +47,6 @@ Loading `magrittr`:
 library(magrittr)
 ```
 
-## ESVAC IU to mg conversion data
-
-The [ESVAC](https://www.ema.europa.eu/en/veterinary-regulatory/overview/antimicrobial-resistance/european-surveillance-veterinary-antimicrobial-consumption-esvac) conversion factors are available from the table 2
-of page 62 of the [OIE](http://www.oie.int) [report](http://www.oie.int/fileadmin/Home/fr/Our_scientific_expertise/docs/pdf/AMR/Survey_on_monitoring_antimicrobial_agents_Dec2016.pdf). A copy-paste of this table without headers is available
-[here](https://raw.githubusercontent.com/viparc/amu_metrics/master/raw_data/esvac.txt).
-We can read this file and format it to compute the following IU-to-mg convertion
-vector:
-
-```{r}
-tmp <- tempfile()
-download.file("https://raw.githubusercontent.com/viparc/amu_metrics/master/raw_data/esvac.txt", tmp)
-```
-
-Reading the raw data, putting in shape and writting to CSV file:
-
-```{r}
-if (!dir.exists("data")) dir.create("data")
-tmp %>% 
-  readLines() %>% 
-  sub("^#.*", "", .) %>% 
-  sub(" *", "", .) %>% 
-  {.[. != ""]} %>% 
-  matrix(ncol = 4, byrow = TRUE) %>% 
-  as.data.frame(stringsAsFactors = FALSE) %>% 
-  setNames(c("ab_vet_med", "ab_oie", "IU.mg", "mg.IU")) %>% 
-  write.csv("data/esvac.csv", quote = FALSE, row.names = FALSE)
-```
-
 ## Age-weight relationship
 
 Data on chicken weights as a function of age were collected for a previous
@@ -82,9 +55,16 @@ study. The data are
 
 ```{r}
 age_weight_data <- "https://www.dropbox.com/s/5mmw31s2txbmgnx/Supplementary_Data_Frontiers.xlsx?dl=0"
+```
+
+Let's dowload the excel file:
+
+```{r}
 tmp <- tempfile(fileext = ".xlsx")
 download.file(sub("dl=0", "raw=1", age_weight_data), tmp)
 ```
+
+Let's transform into a CSV file:
 
 ```{r}
 if (!dir.exists("data")) dir.create("data")
@@ -97,5 +77,11 @@ tmp %>%
   write.csv("data/age_weight.csv", quote = FALSE, row.names = FALSE)
 ```
 
+The data can now be loaded by:
+
+```{r}
+age_weight <- readr::read_csv("https://raw.githubusercontent.com/viparc/amu_metrics/master/data/age_weight.csv",
+                              col_types = "iiid")
+```
 
 

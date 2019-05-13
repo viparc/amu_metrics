@@ -271,6 +271,8 @@ h6 {
 }
 </style>
 
+<style type="text/css">pre, code {white-space:pre !important; overflow-x:scroll !important}
+html { overflow-x: scroll; }</style>
 
 </head>
 
@@ -393,7 +395,6 @@ $(document).ready(function () {
 <div id="TOC">
 <ul>
 <li><a href="#packages">Packages</a></li>
-<li><a href="#esvac-iu-to-mg-conversion-data">ESVAC IU to mg conversion data</a></li>
 <li><a href="#age-weight-relationship">Age-weight relationship</a></li>
 </ul>
 </div>
@@ -402,35 +403,20 @@ $(document).ready(function () {
 <div id="packages" class="section level2">
 <h2>Packages</h2>
 <p>Installing the required packages:</p>
-<pre class="r"><code>&gt; required &lt;- c(&quot;dplyr&quot;, &quot;magrittr&quot;, &quot;readxl&quot;, &quot;tidyr&quot;)
+<pre class="r"><code>&gt; required &lt;- c(&quot;dplyr&quot;, &quot;magrittr&quot;, &quot;readr&quot;, &quot;readxl&quot;, &quot;tidyr&quot;)
 &gt; to_install &lt;- setdiff(required, row.names(installed.packages()))
 &gt; if (length(to_install)) install.packages(to_install)</code></pre>
 <p>Loading <code>magrittr</code>:</p>
 <pre class="r"><code>&gt; library(magrittr)</code></pre>
 </div>
-<div id="esvac-iu-to-mg-conversion-data" class="section level2">
-<h2>ESVAC IU to mg conversion data</h2>
-<p>The <a href="https://www.ema.europa.eu/en/veterinary-regulatory/overview/antimicrobial-resistance/european-surveillance-veterinary-antimicrobial-consumption-esvac">ESVAC</a> conversion factors are available from the table 2 of page 62 of the <a href="http://www.oie.int">OIE</a> <a href="http://www.oie.int/fileadmin/Home/fr/Our_scientific_expertise/docs/pdf/AMR/Survey_on_monitoring_antimicrobial_agents_Dec2016.pdf">report</a>. A copy-paste of this table without headers is available <a href="https://raw.githubusercontent.com/viparc/amu_metrics/master/raw_data/esvac.txt">here</a>. We can read this file and format it to compute the following IU-to-mg convertion vector:</p>
-<pre class="r"><code>&gt; tmp &lt;- tempfile()
-&gt; download.file(&quot;https://raw.githubusercontent.com/viparc/amu_metrics/master/raw_data/esvac.txt&quot;, tmp)</code></pre>
-<p>Reading the raw data, putting in shape and writting to CSV file:</p>
-<pre class="r"><code>&gt; if (!dir.exists(&quot;data&quot;)) dir.create(&quot;data&quot;)
-&gt; tmp %&gt;% 
-+   readLines() %&gt;% 
-+   sub(&quot;^#.*&quot;, &quot;&quot;, .) %&gt;% 
-+   sub(&quot; *&quot;, &quot;&quot;, .) %&gt;% 
-+   {.[. != &quot;&quot;]} %&gt;% 
-+   matrix(ncol = 4, byrow = TRUE) %&gt;% 
-+   as.data.frame(stringsAsFactors = FALSE) %&gt;% 
-+   setNames(c(&quot;ab_vet_med&quot;, &quot;ab_oie&quot;, &quot;IU.mg&quot;, &quot;mg.IU&quot;)) %&gt;% 
-+   write.csv(&quot;data/esvac.csv&quot;, quote = FALSE, row.names = FALSE)</code></pre>
-</div>
 <div id="age-weight-relationship" class="section level2">
 <h2>Age-weight relationship</h2>
 <p>Data on chicken weights as a function of age were collected for a previous study. The data are <a href="https://www.dropbox.com/s/5mmw31s2txbmgnx/Supplementary_Data_Frontiers.xlsx?dl=0">here</a>:</p>
-<pre class="r"><code>&gt; age_weight_data &lt;- &quot;https://www.dropbox.com/s/5mmw31s2txbmgnx/Supplementary_Data_Frontiers.xlsx?dl=0&quot;
-&gt; tmp &lt;- tempfile(fileext = &quot;.xlsx&quot;)
+<pre class="r"><code>&gt; age_weight_data &lt;- &quot;https://www.dropbox.com/s/5mmw31s2txbmgnx/Supplementary_Data_Frontiers.xlsx?dl=0&quot;</code></pre>
+<p>Let’s dowload the excel file:</p>
+<pre class="r"><code>&gt; tmp &lt;- tempfile(fileext = &quot;.xlsx&quot;)
 &gt; download.file(sub(&quot;dl=0&quot;, &quot;raw=1&quot;, age_weight_data), tmp)</code></pre>
+<p>Let’s transform into a CSV file:</p>
 <pre class="r"><code>&gt; if (!dir.exists(&quot;data&quot;)) dir.create(&quot;data&quot;)
 &gt; tmp %&gt;% 
 +   readxl::read_excel() %&gt;% 
@@ -439,6 +425,9 @@ $(document).ready(function () {
 +   dplyr::mutate(week = sub(&quot;Week &quot;, &quot;&quot;, week)) %&gt;% 
 +   dplyr::mutate_at(c(&quot;FlockID&quot;, &quot;Chicken&quot;, &quot;week&quot;), as.integer) %&gt;% 
 +   write.csv(&quot;data/age_weight.csv&quot;, quote = FALSE, row.names = FALSE)</code></pre>
+<p>The data can now be loaded by:</p>
+<pre class="r"><code>&gt; age_weight &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/viparc/amu_metrics/master/data/age_weight.csv&quot;,
++                               col_types = &quot;iiid&quot;)</code></pre>
 </div>
 
 
